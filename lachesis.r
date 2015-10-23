@@ -37,6 +37,7 @@ input.args <- matrix(c(
 ), byrow = TRUE, ncol = 4)
 optional.args <- matrix(c(
     "outfile",    "o", optional, "character",
+    "verbose",    "v", optional, "character",
     "help",       "h", optional, "character"
 ), byrow = TRUE, ncol = 4)
 spec <- rbind(input.args, optional.args)
@@ -54,6 +55,7 @@ usage <- function() {
     cat("    --exams      -e    Spreadsheet with exam matrix info.\n")
     cat("    --locations  -l    Spreadsheet with venue info.\n")
     cat("    --outfile    -o    Spreadsheet for storing final master roster.\n")
+    cat("    --verbose    -v    Print debugging information to stderr.\n")
     cat("    --help       -h    Print this usage information.\n")
     cat("\n")
     cat("If --outfile is not given, will output to stdout.\n")
@@ -61,6 +63,10 @@ usage <- function() {
 if(!is.null(opt$help)) {
     usage()
     quit(status = 0)
+}
+verbose <- FALSE
+if(!is.null(opt$verbose)) {
+    verbose <- TRUE
 }
 
 # Validate options.
@@ -87,6 +93,11 @@ if(!is.null(opt$outfile)) {
 }
 
 # Extract data from input files.
+if(verbose) {
+    sink("/dev/stderr")
+    cat("Reading data files ... ")
+    sink()
+}
 load.data <- function(option.name) {
     filename <- opt[[option.name]]
     if(!file.exists(filename)) {
@@ -94,15 +105,24 @@ load.data <- function(option.name) {
         quit(status = error$io)
     }
     x <- file_ext(filename)
+    input <- NULL
     if(x == "csv") {
-        return(read.csv(filename))
+        input <- read.csv(filename)
     } else if (x %in% c("xls", "xlsx")) {
-        install.and.attach("xlsx")
-        return(read.xlsx(filename, 1))
+        suppressMessages(install.and.attach("xlsx"))
+        input <- read.xlsx(filename, 1)
     } else {
         cat("Unknown file extension", x, "for file name", filename, "\n")
         quit(status = error$filetype)
     }
+    if(verbose) {
+        sink("/dev/stderr")
+        cat(filename, "... ")
+        sink()
+    }
+    return(input)
 }
 data <- lapply(input.args[,1], load.data)
+cat("done.\n")
 names(data) <- input.args[,1]
+data$exams <- data$exams[1:7] # Only keep relevant data.

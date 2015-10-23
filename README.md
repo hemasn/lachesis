@@ -17,6 +17,7 @@ Valid filetypes are csv, xls and xlsx.
   `--exams`      | `-e` | Spreadsheet with exam matrix info.
   `--locations`  | `-l` | Spreadsheet with venue info.
   `--outfile`    | `-o` | Spreadsheet for storing final master roster.
+  `--verbose`    | `-v` | Print debugging info to `stderr`.
   `--help`       | `-h` | Print this usage information.
 
-If `--outfile` is not given, will output to stdout.
+If `--outfile` is not given, will output to `stdout`.
