@@ -1,4 +1,13 @@
-Copyright (c) 2015
+Copyright (c) 2015:
+
+* Timothy Rice
+* Tani Licea
+* Grace Leon
+* Miguel Sanchez
+* Terry Dai
+* Rayen Magpantay
+* Hema Nathen
+
 
 All rights reserved.
 
